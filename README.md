@@ -1,6 +1,6 @@
-# 🌡️ IoT Sensor Telemetry — ESP32 → MQTT → InfluxDB
+# 🌡️ IoT Sensor Telemetry - ESP32 → MQTT → InfluxDB
 
-An end-to-end **IoT telemetry pipeline**: an **ESP32** reads environmental sensors, publishes the readings over **MQTT**, and a Python bridge stores them in **InfluxDB** — ready for time-series dashboards.
+An end-to-end **IoT telemetry pipeline**: an **ESP32** reads environmental sensors, publishes the readings over **MQTT**, and a Python bridge stores them in **InfluxDB** - ready for time-series dashboards.
 
 A small but complete slice of the data journey, from a physical sensor all the way to a queryable time-series database.
 
@@ -23,10 +23,10 @@ A small but complete slice of the data journey, from a physical sensor all the w
 
 | File | Role |
 |------|------|
-| [`src/main.cpp`](src/main.cpp) | ESP32 firmware — reads BME680 + DHT11 + analog sensors, connects to WiFi (WPA2-Enterprise) and publishes each reading to its own MQTT topic |
+| [`src/main.cpp`](src/main.cpp) | ESP32 firmware - reads BME680 + DHT11 + analog sensors, connects to WiFi (WPA2-Enterprise) and publishes each reading to its own MQTT topic |
 | [`mqtt2influxdb.py`](mqtt2influxdb.py) | Subscribes to the MQTT topics and writes the parsed values into InfluxDB |
 | [`platformio.ini`](platformio.ini) | PlatformIO build config (`esp32dev`, Adafruit BME680 / DHT / PubSubClient) |
-| `src/secrets.h.example` | Template for credentials — copy to `secrets.h` (git-ignored) |
+| `src/secrets.h.example` | Template for credentials - copy to `secrets.h` (git-ignored) |
 
 **Sensors:** BME680 (temperature, pressure, humidity, gas/air-quality), DHT11 (temperature, humidity), TMP36 (temperature), LDR (luminosity).
 
@@ -66,7 +66,7 @@ ESP32 · Arduino/C++ · PlatformIO · BME680 / DHT · MQTT (PubSubClient) · Inf
 
 ---
 
-## 🐳 Run the whole stack — no hardware required
+## 🐳 Run the whole stack - no hardware required
 
 Don't have an ESP32 on hand? The [`stack/`](stack/) folder spins up the **entire pipeline** in Docker, with a **software sensor simulator** standing in for the board:
 
