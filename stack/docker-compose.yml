@@ -1,0 +1,49 @@
+name: iot-sensor-telemetry
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports: ["1883:1883"]
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  influxdb:
+    image: influxdb:1.8
+    ports: ["8086:8086"]
+    environment:
+      - INFLUXDB_DB=sensors
+    volumes:
+      - influx_data:/var/lib/influxdb
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    ports: ["3000:3000"]
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on: [influxdb]
+
+  # Publishes realistic sensor readings so the pipeline runs with NO hardware.
+  simulator:
+    build: ../simulator
+    environment:
+      - MQTT_HOST=mosquitto
+      - MQTT_PORT=1883
+      - TOPIC_ROOT=devices
+    depends_on: [mosquitto]
+
+  # Subscribes to MQTT and writes readings into InfluxDB.
+  bridge:
+    build: ../simulator
+    command: ["python", "bridge.py"]
+    environment:
+      - MQTT_HOST=mosquitto
+      - INFLUXDB_HOST=influxdb
+      - INFLUXDB_DATABASE=sensors
+      - TOPIC_ROOT=devices
+    depends_on: [mosquitto, influxdb]
+
+volumes:
+  influx_data:

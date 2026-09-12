@@ -66,6 +66,31 @@ ESP32 · Arduino/C++ · PlatformIO · BME680 / DHT · MQTT (PubSubClient) · Inf
 
 ---
 
+## 🐳 Run the whole stack — no hardware required
+
+Don't have an ESP32 on hand? The [`stack/`](stack/) folder spins up the **entire pipeline** in Docker, with a **software sensor simulator** standing in for the board:
+
+```bash
+cd stack
+docker compose up --build
+```
+
+This starts five services:
+
+| Service | Role |
+|---------|------|
+| **mosquitto** | MQTT broker (port 1883) |
+| **simulator** | publishes realistic BME680/DHT/LDR readings to MQTT (replaces the ESP32) |
+| **bridge** | subscribes to MQTT and writes readings into InfluxDB |
+| **influxdb** | time-series database (`sensors` DB, port 8086) |
+| **grafana** | dashboards at http://localhost:3000 (InfluxDB datasource pre-provisioned) |
+
+So the same **device → broker → bridge → time-series DB → dashboard** flow runs end to end on any laptop. Swap the `simulator` for the real firmware ([`src/main.cpp`](src/main.cpp)) and nothing else changes.
+
+The simulator ([`simulator/simulate.py`](simulator/simulate.py)) generates a plausible daily curve (a slow sine + noise) per sensor, publishing to the same topics the firmware uses.
+
+---
+
 ## 📚 What this project demonstrates
 
 - Building an **end-to-end IoT data pipeline** (device → broker → database)
